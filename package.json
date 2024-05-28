@@ -1,0 +1,33 @@
+{
+  "name": "skullsnap",
+  "version": "1.0.0",
+  "description": "take selfies with a photobooth-esque application",
+  "main": "./server/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "node server/index.js",
+    "client": "npm start --prefix client"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/misterhat/skullsnap.git"
+  },
+  "keywords": [
+    "photobooth",
+    "photo",
+    "selfie"
+  ],
+  "author": "Zorian Medwid <misterhat144@gmail.com>",
+  "license": "AGPL-3.0+",
+  "bugs": {
+    "url": "https://github.com/misterhat/skullsnap/issues"
+  },
+  "homepage": "https://github.com/misterhat/skullsnap#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
