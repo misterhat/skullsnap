@@ -1,4 +1,8 @@
+import QRCode from 'qrcode';
 import React, { useEffect, useRef, useState } from 'react';
+
+const WEBCAM_WIDTH = 1080;
+const WEBCAM_HEIGHT = WEBCAM_WIDTH;
 
 function ShutterButton({ disabled, delay, onClick, onFinished }) {
     const [isClicked, setIsClicked] = useState(false);
@@ -58,13 +62,10 @@ function App() {
     const webcamVideoFeed = useRef();
     const webcamCanvas = useRef();
 
-    /*const [width, setWidth] = useState(0);
-    const [height, setHeight] = useState(0);*/
-
     useEffect(() => {
         navigator.mediaDevices
             .getUserMedia({
-                video: { width: 1080, height: 1080 },
+                video: { width: WEBCAM_WIDTH, height: WEBCAM_HEIGHT },
                 audio: false
             })
             .then((stream) => {
@@ -74,9 +75,6 @@ function App() {
                 video.addEventListener('loadedmetadata', () => {
                     canvas.width = video.videoWidth;
                     canvas.height = video.videoHeight;
-
-                    /*setWidth(video.videoWidth);
-                    setHeight(video.videoHeight);*/
                 });
 
                 video.srcObject = stream;
@@ -87,6 +85,7 @@ function App() {
     const [shutterDisabled, setShutterDisabled] = useState(false);
     const [flash, setFlash] = useState(false);
     const [showPreview, setShowPreview] = useState(false);
+    const [isSaved, setIsSaved] = useState(false);
 
     const takePhoto = () => {
         setFlash(true);
@@ -106,29 +105,32 @@ function App() {
     const savePhoto = () => {
         webcamCanvas.current.toBlob(async (blob) => {
             const formData = new FormData();
-            formData.append('file', blob, 'photo.png');
+            formData.append('file', blob, 'photo.jpg');
 
             const res = await fetch('http://172.30.6.158:5000/upload', {
-                method: 'POST',
+                method: 'post',
                 body: formData
             });
 
-            console.log(await res.text());
-        }, 'image/png');
+            const { file } = await res.json();
+
+            QRCode.toCanvas(
+                webcamCanvas.current,
+                `http://172.30.6.158:5000/${file}`,
+                { scale: 8 },
+                (err) => {
+                    if (err) {
+                        console.error(err);
+                    }
+                }
+            );
+
+            setIsSaved(true);
+        }, 'image/jpeg');
     };
 
     return (
         <div onClick={() => document.documentElement.requestFullscreen()}>
-            {/*<img
-                src="seabears.png"
-                style={{
-                    position: 'absolute',
-                    width: '10vh',
-                    top: '2vh',
-                    left: 'calc(50% - 5vh)'
-                }}
-            />*/}
-
             <main>
                 <canvas
                     style={{ display: showPreview ? 'block' : 'none' }}
@@ -142,22 +144,26 @@ function App() {
                     muted={true}
                     autoPlay={true}
                 ></video>
+
                 {showPreview ? (
                     <div className="shutter-buttons">
                         <button
                             className="button ubuntu-bold"
-                            onClick={() => {
-                                setShowPreview(false);
-                            }}
+                            onClick={() => setShowPreview(false)}
                         >
-                            Try Again
+                            Take Another
                         </button>
-                        <button
-                            className="button ubuntu-bold"
-                            onClick={savePhoto}
-                        >
-                            Save
-                        </button>
+
+                        {isSaved ? (
+                            ''
+                        ) : (
+                            <button
+                                className="button ubuntu-bold"
+                                onClick={savePhoto}
+                            >
+                                Save
+                            </button>
+                        )}
                     </div>
                 ) : (
                     <ShutterButtons

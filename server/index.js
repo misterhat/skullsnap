@@ -2,6 +2,7 @@ const cors = require('cors');
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 
@@ -12,10 +13,7 @@ const storage = multer.diskStorage({
         done(null, './uploads/');
     },
     filename: function (req, file, done) {
-        done(
-            null,
-            file.fieldname + '-' + Date.now() + path.extname(file.originalname)
-        );
+        done(null, `${uuidv4()}.jpg`);
     }
 });
 
@@ -23,18 +21,17 @@ const upload = multer({ storage });
 
 app.use(
     cors({
-        origin: 'http://localhost:3000',
+        origin: ['http://localhost:3000', 'http://172.30.6.158:3000'],
         methods: ['GET', 'POST'],
         allowedHeaders: ['Content-Type']
     })
 );
 
+app.use(express.static('uploads'));
+
 app.post('/upload', upload.single('file'), (req, res) => {
     try {
-        res.status(200).json({
-            message: 'File uploaded successfully',
-            file: req.file
-        });
+        res.status(200).json({ file: req.file.filename });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

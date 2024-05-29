@@ -2,7 +2,8 @@
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     display: flex;
@@ -47,7 +48,7 @@ body {
     color: #fff;
     font-size: 32px;
     margin: 0 auto 0 auto;
-    padding: 8px;
+    padding: 16px;
 }
 
 .button:disabled {
@@ -61,7 +62,7 @@ body {
 
 .shutter-buttons {
     display: flex;
-    margin: 2vh auto 0 auto;
+    margin: 6vh auto 0 auto;
     width: 50vw;
 }
 
