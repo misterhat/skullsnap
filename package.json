@@ -1,7 +1,7 @@
 {
   "name": "skullsnap",
   "version": "1.0.0",
-  "description": "take selfies with a photobooth-esque application",
+  "description": "take timed photos with the webcam",
   "main": "./server/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -25,7 +25,9 @@
   },
   "homepage": "https://github.com/misterhat/skullsnap#readme",
   "dependencies": {
-    "express": "^4.19.2"
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

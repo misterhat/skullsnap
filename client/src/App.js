@@ -5,6 +5,12 @@ function ShutterButton({ disabled, delay, onClick, onFinished }) {
     const [countdown, setCountdown] = useState(delay);
 
     useEffect(() => {
+        if (countdown <= 1) {
+            setTimeout(() => onFinished(), 1000);
+        }
+    }, [countdown, onFinished]);
+
+    useEffect(() => {
         let timer;
 
         if (isClicked) {
@@ -13,8 +19,6 @@ function ShutterButton({ disabled, delay, onClick, onFinished }) {
                     if (prevTime <= 1) {
                         clearInterval(timer);
                         setIsClicked(false);
-
-                        onFinished();
 
                         return delay;
                     }
@@ -33,7 +37,7 @@ function ShutterButton({ disabled, delay, onClick, onFinished }) {
                 onClick();
                 setIsClicked(true);
             }}
-            className="shutter-button ubuntu-bold"
+            className="button shutter-button ubuntu-bold"
             disabled={disabled}
         >
             {countdown}
@@ -41,20 +45,77 @@ function ShutterButton({ disabled, delay, onClick, onFinished }) {
     );
 }
 
+function ShutterButtons(props) {
+    return (
+        <div className="shutter-buttons">
+            <ShutterButton delay={2} {...props} />
+            <ShutterButton delay={10} {...props} />
+        </div>
+    );
+}
+
 function App() {
     const webcamVideoFeed = useRef();
+    const webcamCanvas = useRef();
+
+    /*const [width, setWidth] = useState(0);
+    const [height, setHeight] = useState(0);*/
 
     useEffect(() => {
         navigator.mediaDevices
             .getUserMedia({
-                video: { width: 1080, height: 1920 },
+                video: { width: 1080, height: 1080 },
                 audio: false
             })
-            .then((stream) => (webcamVideoFeed.current.srcObject = stream))
+            .then((stream) => {
+                const video = webcamVideoFeed.current;
+                const canvas = webcamCanvas.current;
+
+                video.addEventListener('loadedmetadata', () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+
+                    /*setWidth(video.videoWidth);
+                    setHeight(video.videoHeight);*/
+                });
+
+                video.srcObject = stream;
+            })
             .catch((e) => console.error(e));
     }, []);
 
     const [shutterDisabled, setShutterDisabled] = useState(false);
+    const [flash, setFlash] = useState(false);
+    const [showPreview, setShowPreview] = useState(false);
+
+    const takePhoto = () => {
+        setFlash(true);
+
+        setTimeout(() => {
+            setFlash(false);
+            setShutterDisabled(false);
+            setShowPreview(true);
+        }, 800);
+
+        setTimeout(() => {
+            const context = webcamCanvas.current.getContext('2d');
+            context.drawImage(webcamVideoFeed.current, 0, 0);
+        }, 300);
+    };
+
+    const savePhoto = () => {
+        webcamCanvas.current.toBlob(async (blob) => {
+            const formData = new FormData();
+            formData.append('file', blob, 'photo.png');
+
+            const res = await fetch('http://172.30.6.158:5000/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            console.log(await res.text());
+        }, 'image/png');
+    };
 
     return (
         <div onClick={() => document.documentElement.requestFullscreen()}>
@@ -69,34 +130,48 @@ function App() {
             />*/}
 
             <main>
+                <canvas
+                    style={{ display: showPreview ? 'block' : 'none' }}
+                    className="webcam-preview"
+                    ref={webcamCanvas}
+                ></canvas>
                 <video
+                    style={{ display: showPreview ? 'none' : 'block' }}
                     className="webcam-preview"
                     ref={webcamVideoFeed}
                     muted={true}
                     autoPlay={true}
                 ></video>
-
-                <div class="shutter-buttons">
-                    <ShutterButton
-                        delay={2}
+                {showPreview ? (
+                    <div className="shutter-buttons">
+                        <button
+                            className="button ubuntu-bold"
+                            onClick={() => {
+                                setShowPreview(false);
+                            }}
+                        >
+                            Try Again
+                        </button>
+                        <button
+                            className="button ubuntu-bold"
+                            onClick={savePhoto}
+                        >
+                            Save
+                        </button>
+                    </div>
+                ) : (
+                    <ShutterButtons
                         onClick={() => setShutterDisabled(true)}
                         disabled={shutterDisabled}
-                        onFinished={() => {
-                            console.log('done');
-                            setShutterDisabled(false);
-                        }}
+                        onFinished={takePhoto}
                     />
-                    <ShutterButton
-                        delay={10}
-                        onClick={() => setShutterDisabled(true)}
-                        disabled={shutterDisabled}
-                        onFinished={() => {
-                            console.log('done');
-                            setShutterDisabled(false);
-                        }}
-                    />
-                </div>
+                )}
             </main>
+
+            <div
+                className="flash"
+                style={{ opacity: flash ? 1 : 0, pointerEvents: 'none' }}
+            ></div>
         </div>
     );
 }

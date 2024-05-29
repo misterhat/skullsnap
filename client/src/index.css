@@ -29,9 +29,8 @@ body {
 
 .webcam-preview {
     background-color: #000;
-    width: 676px;
-    height: 900px;
-    margin: 0 auto 0 auto;
+    width: 80vw;
+    margin: auto;
     border-radius: 8px;
 }
 
@@ -41,28 +40,45 @@ body {
     border-radius: 50%;
 }
 
+.button {
+    background-color: rgb(26, 175, 168);
+    border-radius: 8px;
+    border: none;
+    color: #fff;
+    font-size: 32px;
+    margin: 0 auto 0 auto;
+    padding: 8px;
+}
+
+.button:disabled {
+    background-color: #aaa;
+    pointer-events: none;
+}
+
+.button:active {
+    transform: scale(0.8);
+}
+
 .shutter-buttons {
-    margin-top: 2vh;
     display: flex;
+    margin: 2vh auto 0 auto;
+    width: 50vw;
 }
 
 .shutter-button {
     width: 128px;
     height: 128px;
-    background-color: rgb(26, 175, 168);
     border-radius: 50%;
-    border: none;
-    margin: 0 auto 0 auto;
     display: block;
-    font-size: 32px;
-    color: #fff;
 }
 
-.shutter-button:active {
-    transform: scale(0.8);
-}
-
-.shutter-button:disabled {
-    background-color: #aaa;
-    pointer-events: none;
+.flash {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 1000;
+    background-color: #fff;
+    top: 0;
+    left: 0;
+    transition: opacity 0.25s linear;
 }
