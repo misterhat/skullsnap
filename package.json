@@ -1,7 +1,7 @@
 {
   "name": "skullsnap",
   "version": "1.0.0",
-  "description": "take timed photos with the webcam",
+  "description": "take timed photos with the webcam and add a frame",
   "main": "./server/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

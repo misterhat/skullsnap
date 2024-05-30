@@ -1,8 +1,8 @@
 import QRCode from 'qrcode';
 import React, { useEffect, useRef, useState } from 'react';
 
-const WEBCAM_WIDTH = 1080;
-const WEBCAM_HEIGHT = WEBCAM_WIDTH;
+const WEBCAM_WIDTH = 1920;
+const WEBCAM_HEIGHT = 1080;
 
 function ShutterButton({ disabled, delay, onClick, onFinished }) {
     const [isClicked, setIsClicked] = useState(false);
@@ -97,7 +97,15 @@ function App() {
         }, 800);
 
         setTimeout(() => {
-            const context = webcamCanvas.current.getContext('2d');
+            const canvas = webcamCanvas.current;
+
+            canvas.width = webcamVideoFeed.current.videoWidth;
+            canvas.height = webcamVideoFeed.current.videoHeight;
+
+            canvas.style.width = 'auto';
+            canvas.style.height = 'auto';
+
+            const context = canvas.getContext('2d');
             context.drawImage(webcamVideoFeed.current, 0, 0);
         }, 300);
     };
@@ -117,15 +125,15 @@ function App() {
             QRCode.toCanvas(
                 webcamCanvas.current,
                 `http://172.30.6.158:5000/${file}`,
-                { scale: 8 },
+                { scale: 10 },
                 (err) => {
                     if (err) {
                         console.error(err);
                     }
+
+                    setIsSaved(true);
                 }
             );
-
-            setIsSaved(true);
         }, 'image/jpeg');
     };
 
@@ -149,7 +157,7 @@ function App() {
                     <div className="shutter-buttons">
                         <button
                             className="button ubuntu-bold"
-                            onClick={() => setShowPreview(false)}
+                            onClick={() => { setShowPreview(false) }}
                         >
                             Take Another
                         </button>
