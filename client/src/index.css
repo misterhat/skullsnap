@@ -5,13 +5,13 @@
 html,
 body {
     height: 100%;
+}
+
+body {
     margin: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-body {
     padding: 0;
     background-color: #004f4e;
 }
@@ -27,6 +27,31 @@ body {
     left: 0;
     z-index: -1000;
     opacity: 0.3;
+}
+
+.header {
+    position: absolute;
+    top: 3.5vh;
+    left: 10vw;
+    display: flex;
+    width: 80vw;
+    justify-content: center;
+}
+
+.footer {
+    position: absolute;
+    background-image: url(./footer.png);
+    height: 38vh;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    background-size: 100% 100%;
+    z-index: -1000;
+}
+
+.logo {
+    width: 16vh;
+    margin-right: 8vw;
 }
 
 .ubuntu-regular {
@@ -74,17 +99,23 @@ body {
     transform: scale(0.8);
 }
 
-.shutter-buttons {
+.save-buttons {
     display: flex;
     margin: 6vh auto 0 auto;
     width: 50vw;
 }
 
-.shutter-button {
+.save-button {
     width: 128px;
     height: 128px;
     border-radius: 50%;
     display: block;
+}
+
+.shutter-button {
+    border: none;
+    background-color: transparent;
+    animation: breathe 1s infinite alternate;
 }
 
 .flash {
@@ -96,4 +127,13 @@ body {
     top: 0;
     left: 0;
     transition: opacity 0.25s linear;
+}
+
+@keyframes breathe {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(1.1);
+    }
 }

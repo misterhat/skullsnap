@@ -2,6 +2,10 @@ import QRCode from 'qrcode';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 import frameImage from './frame.png';
+import seabearsImage from './seabears-logo.webp';
+import takeYourShotImage from './take-your-shot.png';
+import instructionsImage from './instructions.png';
+import shutterButtonImage from './shutter-button.png';
 
 const WEBCAM_WIDTH = 1920;
 const WEBCAM_HEIGHT = 1080;
@@ -43,20 +47,11 @@ function ShutterButton({ disabled, delay, onClick, onFinished }) {
                 onClick();
                 setIsClicked(true);
             }}
-            className="button shutter-button ubuntu-bold"
+            className="button save-button ubuntu-bold"
             disabled={disabled}
         >
             {countdown}
         </button>
-    );
-}
-
-function ShutterButtons(props) {
-    return (
-        <div className="shutter-buttons">
-            <ShutterButton delay={2} {...props} />
-            <ShutterButton delay={10} {...props} />
-        </div>
     );
 }
 
@@ -195,12 +190,22 @@ function App() {
         <div onClick={() => document.documentElement.requestFullscreen()}>
             <div className="background"></div>
 
-            <main>
-                {}
+            <header className="header">
+                <img className="logo" src={seabearsImage} alt="Seabears logo" />
+                <img
+                    src={takeYourShotImage}
+                    alt="Take Your Shot"
+                    style={{
+                        alignSelf: 'center'
+                    }}
+                />
+            </header>
+
+            <main className="main-content">
                 <canvas className="webcam-preview" ref={webcamCanvas}></canvas>
 
                 {showPreview ? (
-                    <div className="shutter-buttons">
+                    <div className="save-buttons">
                         <button
                             className="button ubuntu-bold"
                             onClick={() => {
@@ -225,13 +230,34 @@ function App() {
                         )}
                     </div>
                 ) : (
-                    <ShutterButtons
-                        onClick={() => setShutterDisabled(true)}
-                        disabled={shutterDisabled}
-                        onFinished={takePhoto}
-                    />
+                    <div
+                        style={{
+                            display: 'flex',
+                            marginTop: '2vh',
+                            justifyContent: 'center',
+                            width: '100vw'
+                        }}
+                    >
+                        <img
+                            src={instructionsImage}
+                            alt="Instructions"
+                            style={{
+                                alignSelf: 'center',
+                                width: '35vw',
+                                marginRight: '8vw'
+                            }}
+                        />
+                        <button className="shutter-button">
+                            <img
+                                src={shutterButtonImage}
+                                style={{ width: '45vw' }}
+                            />
+                        </button>
+                    </div>
                 )}
             </main>
+
+            <footer className="footer"></footer>
 
             <video
                 style={{ visibility: 'hidden', width: 0, height: 0 }}
