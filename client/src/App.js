@@ -178,6 +178,7 @@ function App() {
     return (
         <div onClick={() => document.documentElement.requestFullscreen()}>
             <main>
+                {}
                 <canvas className="webcam-preview" ref={webcamCanvas}></canvas>
 
                 {showPreview ? (
@@ -186,6 +187,8 @@ function App() {
                             className="button ubuntu-bold"
                             onClick={() => {
                                 setShowPreview(false);
+                                setIsSaved(false);
+
                                 updateCanvasSize();
                             }}
                         >
