@@ -1,6 +1,8 @@
 import QRCode from 'qrcode';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 
+import frameImage from './frame.png';
+
 const WEBCAM_WIDTH = 1920;
 const WEBCAM_HEIGHT = 1080;
 
@@ -102,15 +104,6 @@ function App() {
             setShutterDisabled(false);
             setShowPreview(true);
         }, 800);
-
-        setTimeout(() => {
-            const canvas = webcamCanvas.current;
-
-            updateCanvasSize();
-
-            const context = canvas.getContext('2d');
-            context.drawImage(webcamVideoFeed.current, 0, 0);
-        }, 300);
     };
 
     const savePhoto = () => {
@@ -142,6 +135,16 @@ function App() {
 
     const requestRef = useRef();
     const previousTimeRef = useRef();
+    const imageRef = useRef();
+
+    useEffect(() => {
+        const image = new Image();
+        image.src = frameImage;
+
+        image.onload = () => {
+            imageRef.current = image;
+        };
+    }, []);
 
     const animate = useCallback((time) => {
         const canvas = webcamCanvas.current;
@@ -150,17 +153,30 @@ function App() {
         if (previousTimeRef.current !== undefined) {
             const context = canvas.getContext('2d');
 
+            // move feed down to make room for frame
+            const frameOffset = canvas.height * 0.0375;
+
             context.drawImage(
                 video,
                 0,
                 video.videoHeight - canvas.height,
                 video.videoWidth,
-                canvas.height,
-                0,
-                0,
-                canvas.width,
-                canvas.height
+                canvas.height - frameOffset,
+                frameOffset,
+                frameOffset,
+                canvas.width - frameOffset * 2,
+                canvas.height - frameOffset * 2
             );
+
+            if (imageRef.current) {
+                context.drawImage(
+                    imageRef.current,
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+            }
         }
 
         previousTimeRef.current = time;

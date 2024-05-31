@@ -42,12 +42,10 @@ body {
 }
 
 .webcam-preview {
-    background-color: #000;
-    border-radius: 8px;
+    /*border-radius: 8px;*/
     display: block;
     margin: auto;
     width: 80vw;
-    box-shadow: 10px 10px 20px #222;
 }
 
 .webcam-shutter {
@@ -64,6 +62,7 @@ body {
     font-size: 32px;
     margin: 0 auto 0 auto;
     padding: 16px;
+    transition: 0.1s;
 }
 
 .button:disabled {
