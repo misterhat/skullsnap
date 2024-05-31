@@ -62,6 +62,19 @@ function App() {
     const webcamVideoFeed = useRef();
     const webcamCanvas = useRef();
 
+    const updateCanvasSize = () => {
+        const video = webcamVideoFeed.current;
+        const canvas = webcamCanvas.current;
+
+        const canvasSize = Math.min(video.videoWidth, video.videoHeight);
+
+        canvas.width = canvasSize;
+        canvas.height = canvasSize;
+
+        canvas.style.width = '80vw';
+        canvas.style.height = 'auto';
+    };
+
     useEffect(() => {
         navigator.mediaDevices
             .getUserMedia({
@@ -70,14 +83,8 @@ function App() {
             })
             .then((stream) => {
                 const video = webcamVideoFeed.current;
-                const canvas = webcamCanvas.current;
-
-                video.addEventListener('loadedmetadata', () => {
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                });
-
                 video.srcObject = stream;
+                video.addEventListener('loadedmetadata', updateCanvasSize);
             })
             .catch((e) => console.error(e));
     }, []);
@@ -99,11 +106,7 @@ function App() {
         setTimeout(() => {
             const canvas = webcamCanvas.current;
 
-            canvas.width = webcamVideoFeed.current.videoWidth;
-            canvas.height = webcamVideoFeed.current.videoHeight;
-
-            canvas.style.width = 'auto';
-            canvas.style.height = 'auto';
+            updateCanvasSize();
 
             const context = canvas.getContext('2d');
             context.drawImage(webcamVideoFeed.current, 0, 0);
@@ -137,27 +140,54 @@ function App() {
         }, 'image/jpeg');
     };
 
+    const requestRef = useRef();
+    const previousTimeRef = useRef();
+
+    const animate = (time) => {
+        const canvas = webcamCanvas.current;
+        const video = webcamVideoFeed.current;
+
+        if (previousTimeRef.current !== undefined) {
+            const context = canvas.getContext('2d');
+
+            context.drawImage(
+                video,
+                0,
+                video.videoHeight - canvas.height,
+                video.videoWidth,
+                canvas.height,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+        }
+
+        previousTimeRef.current = time;
+        requestRef.current = requestAnimationFrame(animate);
+    };
+
+    useEffect(() => {
+        if (!showPreview) {
+            requestRef.current = requestAnimationFrame(animate);
+        }
+
+        return () => cancelAnimationFrame(requestRef.current);
+    }, [showPreview]);
+
     return (
         <div onClick={() => document.documentElement.requestFullscreen()}>
             <main>
-                <canvas
-                    style={{ display: showPreview ? 'block' : 'none' }}
-                    className="webcam-preview"
-                    ref={webcamCanvas}
-                ></canvas>
-                <video
-                    style={{ display: showPreview ? 'none' : 'block' }}
-                    className="webcam-preview"
-                    ref={webcamVideoFeed}
-                    muted={true}
-                    autoPlay={true}
-                ></video>
+                <canvas className="webcam-preview" ref={webcamCanvas}></canvas>
 
                 {showPreview ? (
                     <div className="shutter-buttons">
                         <button
                             className="button ubuntu-bold"
-                            onClick={() => { setShowPreview(false) }}
+                            onClick={() => {
+                                setShowPreview(false);
+                                updateCanvasSize();
+                            }}
                         >
                             Take Another
                         </button>
@@ -181,6 +211,13 @@ function App() {
                     />
                 )}
             </main>
+
+            <video
+                style={{ visibility: 'hidden', width: 0, height: 0 }}
+                ref={webcamVideoFeed}
+                muted={true}
+                autoPlay={true}
+            ></video>
 
             <div
                 className="flash"

@@ -30,9 +30,10 @@ body {
 
 .webcam-preview {
     background-color: #000;
-    width: 80vw;
-    margin: auto;
     border-radius: 8px;
+    display: block;
+    margin: auto;
+    width: 80vw;
 }
 
 .webcam-shutter {
