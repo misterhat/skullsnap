@@ -1,5 +1,5 @@
 import QRCode from 'qrcode';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 const WEBCAM_WIDTH = 1920;
 const WEBCAM_HEIGHT = 1080;
@@ -143,7 +143,7 @@ function App() {
     const requestRef = useRef();
     const previousTimeRef = useRef();
 
-    const animate = (time) => {
+    const animate = useCallback((time) => {
         const canvas = webcamCanvas.current;
         const video = webcamVideoFeed.current;
 
@@ -165,7 +165,7 @@ function App() {
 
         previousTimeRef.current = time;
         requestRef.current = requestAnimationFrame(animate);
-    };
+    }, []);
 
     useEffect(() => {
         if (!showPreview) {
@@ -173,10 +173,12 @@ function App() {
         }
 
         return () => cancelAnimationFrame(requestRef.current);
-    }, [showPreview]);
+    }, [showPreview, animate]);
 
     return (
         <div onClick={() => document.documentElement.requestFullscreen()}>
+            <div className="background"></div>
+
             <main>
                 {}
                 <canvas className="webcam-preview" ref={webcamCanvas}></canvas>
