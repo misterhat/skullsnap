@@ -202,21 +202,23 @@ function App() {
             }
 
             context.textAlign = 'center';
-            context.font = '38px Knockout';
+
+            context.font = `${Math.round(canvas.height * 0.05)}px Knockout`;
+
             context.fillStyle = '#fff';
 
             context.fillText(
                 'OTTAWA VS WINNIPEG',
                 canvas.width / 2,
-                canvas.height - 30
+                canvas.height - canvas.height * 0.04
             );
 
-            context.font = '24px Knockout';
+            context.font = `${Math.round(canvas.height * 0.03)}px Knockout`;
 
             context.fillText(
                 formatDate(new Date()),
                 canvas.width / 2,
-                canvas.height - 6
+                canvas.height - Math.round(canvas.height * 0.008)
             );
         }
 
