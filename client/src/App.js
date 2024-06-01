@@ -75,10 +75,14 @@ function ShutterButton({ disabled, delay, onClick, onFinished }) {
                 onClick();
                 setIsClicked(true);
             }}
-            className="button save-button ubuntu-bold"
+            className="shutter-button"
             disabled={disabled}
         >
-            {countdown}
+            {countdown === delay ? (
+                <img src={shutterButtonImage} style={{ width: '100%' }} />
+            ) : (
+                `${countdown}...`
+            )}
         </button>
     );
 }
@@ -162,11 +166,8 @@ function App() {
 
     useEffect(() => {
         const image = new Image();
+        image.onload = () => (imageRef.current = image);
         image.src = frameImage;
-
-        image.onload = () => {
-            imageRef.current = image;
-        };
     }, []);
 
     const animate = useCallback((time) => {
@@ -255,7 +256,7 @@ function App() {
                 {showPreview ? (
                     <div className="save-buttons">
                         <button
-                            className="button ubuntu-bold"
+                            className="button"
                             onClick={() => {
                                 setShowPreview(false);
                                 setIsSaved(false);
@@ -263,16 +264,13 @@ function App() {
                                 updateCanvasSize();
                             }}
                         >
-                            Take Another
+                            Shoot Again
                         </button>
 
                         {isSaved ? (
                             ''
                         ) : (
-                            <button
-                                className="button ubuntu-bold"
-                                onClick={savePhoto}
-                            >
+                            <button className="button" onClick={savePhoto}>
                                 Save
                             </button>
                         )}
@@ -295,12 +293,12 @@ function App() {
                                 marginRight: '8vw'
                             }}
                         />
-                        <button className="shutter-button">
-                            <img
-                                src={shutterButtonImage}
-                                style={{ width: '45vw' }}
-                            />
-                        </button>
+                        <ShutterButton
+                            delay={6}
+                            onClick={() => setShutterDisabled(true)}
+                            disabled={shutterDisabled}
+                            onFinished={takePhoto}
+                        />
                     </div>
                 )}
             </main>
