@@ -10,6 +10,34 @@ import shutterButtonImage from './shutter-button.png';
 const WEBCAM_WIDTH = 1920;
 const WEBCAM_HEIGHT = 1080;
 
+function formatDate(date) {
+    const day = date.getDate();
+    const year = date.getFullYear();
+
+    const monthName = new Intl.DateTimeFormat('en-US', {
+        month: 'long'
+    }).format(date);
+
+    const ordinalSuffix = (n) => {
+        if (n > 3 && n < 21) {
+            return 'th';
+        }
+
+        switch (n % 10) {
+            case 1:
+                return 'st';
+            case 2:
+                return 'nd';
+            case 3:
+                return 'rd';
+            default:
+                return 'th';
+        }
+    };
+
+    return `${monthName} ${day}${ordinalSuffix(day)} ${year}`;
+}
+
 function ShutterButton({ disabled, delay, onClick, onFinished }) {
     const [isClicked, setIsClicked] = useState(false);
     const [countdown, setCountdown] = useState(delay);
@@ -172,6 +200,24 @@ function App() {
                     canvas.height
                 );
             }
+
+            context.textAlign = 'center';
+            context.font = '38px Knockout';
+            context.fillStyle = '#fff';
+
+            context.fillText(
+                'OTTAWA VS WINNIPEG',
+                canvas.width / 2,
+                canvas.height - 30
+            );
+
+            context.font = '24px Knockout';
+
+            context.fillText(
+                formatDate(new Date()),
+                canvas.width / 2,
+                canvas.height - 6
+            );
         }
 
         previousTimeRef.current = time;
