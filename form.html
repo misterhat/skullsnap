@@ -24,6 +24,7 @@
                 background-color: #111;
                 color: #eee;
                 background-image: url(/zueike.png);
+                background-position: center center;
             }
 
             label {
@@ -63,7 +64,7 @@
                 height: auto;
                 margin: auto;
                 max-width: 256px;
-                width: 80vw;
+                width: 60vw;
             }
 
             .wrap {
@@ -71,11 +72,26 @@
                 width: 80vw;
                 max-width: 640px;
                 margin: auto;
+                position: relative;
+            }
+
+            .photo {
+                position: absolute;
+                top: 0;
+                left: 0;
+                opacity: 0.4;
+                width: 100%;
+                height: 100%;
+                background-size: contain;
+                z-index: -1000;
+                background-repeat: no-repeat;
+                background-position: center;
             }
         </style>
     </head>
     <body>
         <div class="wrap">
+            <div class="photo" style="background-image: url($photo_url)"></div>
             <img class="logo" src="/seabears.webp" alt="Seabears logo" />
             <form method="post">
                 <label>

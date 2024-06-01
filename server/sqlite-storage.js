@@ -28,7 +28,7 @@ class SqliteStorage {
     }
 
     _removeFile(req, file, done) {
-
+        done();
     }
 }
 

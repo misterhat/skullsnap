@@ -18,7 +18,8 @@ body {
     align-items: center;
     justify-content: center;
     padding: 0;
-    background-color: #004f4e;
+    background-color: #000;
+    overflow: hidden;
 }
 
 button:disabled {
@@ -26,21 +27,23 @@ button:disabled {
 }
 
 .background {
-    width: 100%;
-    height: 100%;
+    width: 225%;
+    height: 225%;
     position: absolute;
     background-image: url(./seabears-logo.webp);
     background-repeat: no-repeat;
     background-position: center top;
-    top: -2vh;
-    left: 0;
+    background-size: contain;
+    /*top: -2vh;*/
+    top: -10vh;
+    left: -125%;
     z-index: -1000;
     opacity: 0.4;
 }
 
 .header {
     position: absolute;
-    top: 5.25vh;
+    top: 4vh;
     left: 10vw;
     display: flex;
     width: 80vw;
@@ -61,6 +64,7 @@ button:disabled {
 .logo {
     width: 12vh;
     margin-right: 18vw;
+    align-self: center;
 }
 
 .webcam-preview {

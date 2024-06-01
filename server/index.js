@@ -2,12 +2,24 @@ const cors = require('cors');
 const express = require('express');
 const fs = require('fs');
 const multer = require('multer');
-const path = require('path');
-const { v4: uuidv4 } = require('uuid');
+const { body, validationResult } = require('express-validator');
 
 const sqliteStorage = require('./sqlite-storage');
 
 const app = express();
+
+const validateNameAndEmail = [
+    body('name')
+        .trim()
+        .isLength({ min: 1 })
+        .withMessage('Name is required')
+        .isAlphanumeric('en-US', { ignore: ' ' })
+        .withMessage('Name must contain only letters and spaces'),
+    body('email')
+        .isEmail()
+        .withMessage('Invalid email address')
+        .normalizeEmail()
+];
 
 const PORT = process.env.PORT || 5000;
 
@@ -18,7 +30,13 @@ const queries = {
         'INSERT INTO `photos` (`uuid`, `photo`, `created`) VALUES (?, ?, ?)'
     ),
 
-    getPhoto: db.prepare('SELECT `photo` FROM `photos` WHERE `uuid` = ?')
+    getPhoto: db.prepare('SELECT `photo` FROM `photos` WHERE `uuid` = ?'),
+
+    getName: db.prepare('SELECT `name` FROM `photos` WHERE `uuid` = ?'),
+
+    updateInfo: db.prepare(
+        'UPDATE `photos` SET `name` = ?, `email` = ? WHERE `uuid` = ?'
+    )
 };
 
 const upload = multer({
@@ -39,24 +57,89 @@ app.use(
 app.use(express.static('public'));
 
 // TODO make sure this is limited with a key or something
-app.post('/upload', upload.single('file'), (req, res) => {
+app.post('/upload', upload.single('file'), (req, res, next) => {
     try {
-        res.status(200).json({ file: req.file.filename });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(200).json({ uuid: req.file.id });
+    } catch (e) {
+        next(e);
     }
 });
 
-app.get('/photo/:uuid', (req, res) => {});
+app.get('/photo/:uuid', (req, res, next) => {
+    try {
+        const file = queries.getPhoto.pluck().get(req.params.uuid);
+
+        if (!file) {
+            return next();
+        }
+
+        res.setHeader('Content-Type', 'image/jpeg');
+
+        res.setHeader(
+            'Content-disposition',
+            'attachment; filename=seabears-shot.jpg'
+        );
+
+        res.end(file);
+    } catch (e) {
+        next(e);
+    }
+});
 
 const formHtml = fs.readFileSync('./form.html', 'utf8');
 
-app.get('/submit/:uuid', (req, res) => {
-    res.end(formHtml);
+app.get('/submit/:uuid', (req, res, next) => {
+    const { uuid } = req.params;
+
+    const name = queries.getName.pluck().get(uuid);
+
+    if (typeof name !== 'string') {
+        return next();
+    }
+
+    // don't allow people who already submitted to re-submit
+    if (name.length >= 1) {
+        return res.redirect(`/photo/${uuid}`);
+    }
+
+    res.end(formHtml.replace('$photo_url', `/photo/${uuid}`));
 });
 
-app.post('/submit/:uuid', (req, res) => {
-    res.end();
+app.post(
+    '/submit/:uuid',
+    express.urlencoded({ extended: false }),
+    validateNameAndEmail,
+    (req, res, next) => {
+        const { uuid } = req.params;
+
+        if (!uuid) {
+            return next();
+        }
+
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            console.log(errors);
+            return next();
+        }
+
+        const existingName = queries.getName.pluck().get(uuid);
+
+        if (existingName) {
+            return res.redirect(`/photo/${uuid}`);
+        }
+
+        const { name, email } = req.body;
+
+        queries.updateInfo.run(name, email, uuid);
+
+        res.redirect(`/photo/${uuid}`);
+    }
+);
+
+app.use((err, req, res, next) => {
+    console.error(err);
+    res.status(404).end('');
 });
 
 app.listen(PORT, () => {

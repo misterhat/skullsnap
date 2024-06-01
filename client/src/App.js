@@ -80,7 +80,7 @@ function ShutterButton({ disabled, delay, onClick, onFinished }) {
             className="shutter-button"
             disabled={disabled}
         >
-            {countdown === delay ? (
+            {!isClicked ? (
                 <img
                     className="breathe"
                     src={shutterButtonImage}
@@ -149,20 +149,24 @@ function App() {
                 body: formData
             });
 
-            const { file } = await res.json();
+            try {
+                const { uuid } = await res.json();
 
-            QRCode.toCanvas(
-                webcamCanvas.current,
-                `http://172.30.6.158:5000/${file}`,
-                { scale: 10 },
-                (err) => {
-                    if (err) {
-                        console.error(err);
+                QRCode.toCanvas(
+                    webcamCanvas.current,
+                    `http://172.30.6.158:5000/submit/${uuid}`,
+                    { scale: 12 },
+                    (err) => {
+                        if (err) {
+                            console.error(err);
+                        }
+
+                        setIsSaved(true);
                     }
-
-                    setIsSaved(true);
-                }
-            );
+                );
+            } catch (e) {
+                console.error(e);
+            }
         }, 'image/jpeg');
     };
 
@@ -251,7 +255,8 @@ function App() {
                     src={takeYourShotImage}
                     alt="Take Your Shot"
                     style={{
-                        alignSelf: 'center'
+                        alignSelf: 'center',
+                        width: '35vw'
                     }}
                 />
             </header>
@@ -293,7 +298,7 @@ function App() {
                             }}
                         />
                         <ShutterButton
-                            delay={6}
+                            delay={5}
                             onClick={() => setShutterDisabled(true)}
                             disabled={shutterDisabled}
                             onFinished={takePhoto}
