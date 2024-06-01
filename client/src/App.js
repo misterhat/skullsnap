@@ -1,3 +1,5 @@
+// TODO setTimeout after photo taken
+
 import QRCode from 'qrcode';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 
@@ -79,7 +81,11 @@ function ShutterButton({ disabled, delay, onClick, onFinished }) {
             disabled={disabled}
         >
             {countdown === delay ? (
-                <img src={shutterButtonImage} style={{ width: '100%' }} />
+                <img
+                    className="breathe"
+                    src={shutterButtonImage}
+                    style={{ width: '100%' }}
+                />
             ) : (
                 `${countdown}...`
             )}
@@ -276,14 +282,7 @@ function App() {
                         )}
                     </div>
                 ) : (
-                    <div
-                        style={{
-                            display: 'flex',
-                            marginTop: '2vh',
-                            justifyContent: 'center',
-                            width: '100vw'
-                        }}
-                    >
+                    <div className="save-buttons">
                         <img
                             src={instructionsImage}
                             alt="Instructions"

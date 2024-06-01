@@ -32,7 +32,7 @@ button:disabled {
     background-image: url(./seabears-logo.webp);
     background-repeat: no-repeat;
     background-position: center top;
-    top: -1vh;
+    top: -2vh;
     left: 0;
     z-index: -1000;
     opacity: 0.4;
@@ -40,7 +40,7 @@ button:disabled {
 
 .header {
     position: absolute;
-    top: 3.5vh;
+    top: 5.25vh;
     left: 10vw;
     display: flex;
     width: 80vw;
@@ -59,8 +59,8 @@ button:disabled {
 }
 
 .logo {
-    width: 16vh;
-    margin-right: 12vw;
+    width: 12vh;
+    margin-right: 18vw;
 }
 
 .webcam-preview {
@@ -69,26 +69,20 @@ button:disabled {
     width: 80vw;
 }
 
-.webcam-shutter {
-    width: 128px;
-    height: 128px;
-    border-radius: 50%;
-}
-
 .button {
     background-color: rgb(26, 175, 168);
     border: none;
     color: #fff;
     font-size: 32px;
     margin: 0 auto 0 auto;
-    padding: 24px;
     transition: 0.1s;
     font-family: Helvetica, sans-serif;
-    font-size: 18px;
+    font-size: 28px;
     font-weight: bold;
     text-transform: uppercase;
-    width: 18vw;
+    width: 20vw;
     border-radius: 2px;
+    height: 4vh;
 }
 
 .button:disabled {
@@ -101,8 +95,10 @@ button:disabled {
 
 .save-buttons {
     display: flex;
-    margin: 4vh auto 0 auto;
-    width: 50vw;
+    margin: 3vh auto 0 auto;
+    height: 12vh;
+    justify-content: center;
+    width: 100vw;
 }
 
 .shutter-button {

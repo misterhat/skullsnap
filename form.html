@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- TODO favicon -->
+
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <title>Zueike | Save Your Shot</title>
+
+        <style>
+            html,
+            body {
+                height: 100%;
+            }
+
+            body {
+                margin: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+                font-family: Helvetica, sans-serif;
+                background-color: #111;
+                color: #eee;
+                background-image: url(/zueike.png);
+            }
+
+            label {
+                display: block;
+                margin: 16px 0 16px 0;
+                text-transform: uppercase;
+                font-weight: bold;
+                line-height: 42px;
+            }
+
+            .input {
+                width: 100%;
+                display: block;
+                height: 32px;
+            }
+
+            .button {
+                background-color: rgb(26, 175, 168);
+                border: none;
+                color: #fff;
+                display: block;
+                font-family: Helvetica, sans-serif;
+                font-size: 16px;
+                font-weight: bold;
+                padding: 16px;
+                text-transform: uppercase;
+                margin: auto;
+                transition: 0.1s;
+            }
+
+            .button:active {
+                transform: scale(0.8);
+            }
+
+            .logo {
+                display: block;
+                height: auto;
+                margin: auto;
+                max-width: 256px;
+                width: 80vw;
+            }
+
+            .wrap {
+                padding: 32px;
+                width: 80vw;
+                max-width: 640px;
+                margin: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrap">
+            <img class="logo" src="/seabears.webp" alt="Seabears logo" />
+            <form method="post">
+                <label>
+                    Name:<br />
+                    <input
+                        class="input"
+                        name="name"
+                        type="text"
+                        maxlength="50"
+                        placeholder="Enter your name..."
+                        required="required"
+                    />
+                </label>
+                <label>
+                    E-Mail:<br />
+                    <input
+                        class="input"
+                        name="email"
+                        type="email"
+                        maxlength="100"
+                        placeholder="Enter your e-mail..."
+                        required="required"
+                    />
+                </label>
+                <br />
+                <input class="button" type="submit" value="Submit" />
+            </form>
+        </div>
+    </body>
+</html>
