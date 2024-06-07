@@ -6,8 +6,9 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import frameImage from './frame.png';
 import seabearsImage from './seabears-logo.webp';
 import takeYourShotImage from './take-your-shot.png';
-import instructionsImage from './instructions.png';
 import shutterButtonImage from './shutter-button.png';
+import zueikeImage from './zueike.png';
+import thedemandImage from './thedemand.png';
 
 const WEBCAM_WIDTH = 1920;
 const WEBCAM_HEIGHT = 1080;
@@ -85,6 +86,7 @@ function ShutterButton({ disabled, delay, onClick, onFinished }) {
                     className="breathe"
                     src={shutterButtonImage}
                     style={{ width: '100%' }}
+                    alt="Shoot Now"
                 />
             ) : (
                 `${countdown}...`
@@ -94,6 +96,8 @@ function ShutterButton({ disabled, delay, onClick, onFinished }) {
 }
 
 function App() {
+    const timeout = useRef();
+
     const webcamVideoFeed = useRef();
     const webcamCanvas = useRef();
 
@@ -122,6 +126,11 @@ function App() {
                 video.addEventListener('loadedmetadata', updateCanvasSize);
             })
             .catch((e) => console.error(e));
+
+        // prevent user from dragging on kiosk
+        document.addEventListener('touchmove', (e) => e.preventDefault(), {
+            passive: false
+        });
     }, []);
 
     const [shutterDisabled, setShutterDisabled] = useState(false);
@@ -136,6 +145,10 @@ function App() {
             setFlash(false);
             setShutterDisabled(false);
             setShowPreview(true);
+
+            /*timeout.current = setTimeout(() => {
+                setShowPreview(false);
+            }, 2000);*/
         }, 800);
     };
 
@@ -246,7 +259,15 @@ function App() {
     }, [showPreview, animate]);
 
     return (
-        <div onClick={() => document.documentElement.requestFullscreen()}>
+        <div
+            onClick={() => {
+                try {
+                    document.documentElement.requestFullscreen();
+                } catch (e) {
+                    console.error(e);
+                }
+            }}
+        >
             <div className="background"></div>
 
             <header className="header">
@@ -264,50 +285,64 @@ function App() {
             <main className="main-content">
                 <canvas className="webcam-preview" ref={webcamCanvas}></canvas>
 
-                {showPreview ? (
-                    <div className="save-buttons">
-                        <button
-                            className="button"
-                            onClick={() => {
-                                setShowPreview(false);
-                                setIsSaved(false);
+                <div className="aside-wrap">
+                    {showPreview ? (
+                        <div className="save-buttons">
+                            <button
+                                className="button"
+                                onClick={() => {
+                                    setShowPreview(false);
+                                    setIsSaved(false);
 
-                                updateCanvasSize();
-                            }}
-                        >
-                            Shoot Again
-                        </button>
-
-                        {isSaved ? (
-                            ''
-                        ) : (
-                            <button className="button" onClick={savePhoto}>
-                                Save
+                                    updateCanvasSize();
+                                }}
+                            >
+                                Shoot Again
                             </button>
-                        )}
-                    </div>
-                ) : (
-                    <div className="save-buttons">
-                        <img
-                            src={instructionsImage}
-                            alt="Instructions"
-                            style={{
-                                alignSelf: 'center',
-                                width: '35vw',
-                                marginRight: '8vw'
-                            }}
-                        />
-                        <ShutterButton
-                            delay={5}
-                            onClick={() => setShutterDisabled(true)}
-                            disabled={shutterDisabled}
-                            onFinished={takePhoto}
-                        />
-                    </div>
-                )}
+
+                            {isSaved ? (
+                                ''
+                            ) : (
+                                <button className="button" onClick={savePhoto}>
+                                    Save
+                                </button>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="instructions">
+                            <p>
+                                <span style={{ marginRight: '6vw' }}>
+                                    1. Shoot Your Photo
+                                </span>
+                                2. Join The Newsletter
+                                <br />
+                                3. Share on Social Media
+                            </p>
+
+                            <ShutterButton
+                                delay={5}
+                                onClick={() => setShutterDisabled(true)}
+                                disabled={shutterDisabled}
+                                onFinished={takePhoto}
+                            />
+                        </div>
+                    )}
+                </div>
             </main>
 
-            <footer className="footer"></footer>
+            <footer className="footer">
+                <img
+                    className="footer-image"
+                    src={zueikeImage}
+                    alt="Zueiki logo"
+                />
+                <div>Powered By</div>
+                <img
+                    className="footer-image"
+                    src={thedemandImage}
+                    alt="thedemand logo"
+                />
+            </footer>
 
             <video
                 style={{ visibility: 'hidden', width: 0, height: 0 }}
