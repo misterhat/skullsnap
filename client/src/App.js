@@ -13,6 +13,9 @@ import thedemandImage from './thedemand.png';
 const WEBCAM_WIDTH = 1920;
 const WEBCAM_HEIGHT = 1080;
 
+// amount of time to wait before going back to main preview
+const TIMEOUT = 9000;
+
 function formatDate(date) {
     const day = date.getDate();
     const year = date.getFullYear();
@@ -96,7 +99,7 @@ function ShutterButton({ disabled, delay, onClick, onFinished }) {
 }
 
 function App() {
-    const timeout = useRef();
+    const timeout = useRef(0);
 
     const webcamVideoFeed = useRef();
     const webcamCanvas = useRef();
@@ -138,6 +141,14 @@ function App() {
     const [showPreview, setShowPreview] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
 
+    const updateTimeout = () => {
+        clearTimeout(timeout.current);
+
+        timeout.current = setTimeout(() => {
+            setShowPreview(false);
+        }, TIMEOUT);
+    };
+
     const takePhoto = () => {
         setFlash(true);
 
@@ -146,9 +157,7 @@ function App() {
             setShutterDisabled(false);
             setShowPreview(true);
 
-            /*timeout.current = setTimeout(() => {
-                setShowPreview(false);
-            }, 2000);*/
+            updateTimeout();
         }, 800);
     };
 
@@ -168,13 +177,15 @@ function App() {
                 QRCode.toCanvas(
                     webcamCanvas.current,
                     `http://172.30.6.158:5000/submit/${uuid}`,
-                    { scale: 12 },
+                    { scale: 14 },
                     (err) => {
                         if (err) {
                             console.error(err);
                         }
 
                         setIsSaved(true);
+
+                        updateTimeout();
                     }
                 );
             } catch (e) {
@@ -283,6 +294,8 @@ function App() {
             </header>
 
             <main className="main-content">
+                {isSaved ? <h2>Save Your Shot</h2> : ''}
+
                 <canvas className="webcam-preview" ref={webcamCanvas}></canvas>
 
                 <div className="aside-wrap">
