@@ -75,10 +75,10 @@ app.get('/photo/:uuid', (req, res, next) => {
 
         res.setHeader('Content-Type', 'image/jpeg');
 
-        res.setHeader(
+        /*res.setHeader(
             'Content-disposition',
             'attachment; filename=seabears-shot.jpg'
-        );
+        );*/
 
         res.end(file);
     } catch (e) {
