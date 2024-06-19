@@ -8,13 +8,13 @@ import seabearsImage from './seabears-logo.webp';
 import takeYourShotImage from './take-your-shot.png';
 import shutterButtonImage from './shutter-button.png';
 import zueikeImage from './zueike.png';
-import thedemandImage from './thedemand.png';
+import ondisplayImage from './ondisplay.png';
 
 const WEBCAM_WIDTH = 1920;
 const WEBCAM_HEIGHT = 1080;
 
 // amount of time to wait before going back to main preview
-const TIMEOUT = 9000;
+const TIMEOUT = 15000;
 
 function formatDate(date) {
     const day = date.getDate();
@@ -145,6 +145,9 @@ function App() {
         clearTimeout(timeout.current);
 
         timeout.current = setTimeout(() => {
+            updateCanvasSize();
+
+            setIsSaved(false);
             setShowPreview(false);
         }, TIMEOUT);
     };
@@ -166,17 +169,20 @@ function App() {
             const formData = new FormData();
             formData.append('file', blob, 'photo.jpg');
 
-            const res = await fetch('http://172.30.6.158:5000/upload', {
-                method: 'post',
-                body: formData
-            });
+            const res = await fetch(
+                `${process.env.REACT_APP_API_URL}/upload?secret=hi`,
+                {
+                    method: 'post',
+                    body: formData
+                }
+            );
 
             try {
                 const { uuid } = await res.json();
 
                 QRCode.toCanvas(
                     webcamCanvas.current,
-                    `http://172.30.6.158:5000/submit/${uuid}`,
+                    `${REACT_APP_API_URL}/${uuid}`,
                     { scale: 14 },
                     (err) => {
                         if (err) {
@@ -352,8 +358,8 @@ function App() {
                 <div>Powered By</div>
                 <img
                     className="footer-image"
-                    src={thedemandImage}
-                    alt="thedemand logo"
+                    src={ondisplayImage}
+                    alt="ondisplay logo"
                 />
             </footer>
 

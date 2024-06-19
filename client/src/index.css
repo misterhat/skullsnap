@@ -28,10 +28,10 @@ body {
 h2 {
     color: #eee;
     margin: 0 0 3vh 0;
-    font-size: 52px;
+    font-size: 54px;
     text-align: center;
     text-shadow: 1px 1px #111;
-    letter-spacing: 0.25vw;
+    letter-spacing: 0.33vw;
 }
 
 button:disabled {
