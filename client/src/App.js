@@ -285,6 +285,7 @@ function App() {
         <div
             onClick={() => {
                 try {
+                    throw new Error('ok whatever');
                     document.documentElement.requestFullscreen();
                 } catch (e) {
                     console.error(e);
@@ -321,6 +322,7 @@ function App() {
 
                                     updateCanvasSize();
                                 }}
+                                disabled={isSaving}
                             >
                                 Shoot Again
                             </button>
