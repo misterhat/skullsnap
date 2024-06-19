@@ -182,7 +182,7 @@ function App() {
 
                 QRCode.toCanvas(
                     webcamCanvas.current,
-                    `${REACT_APP_API_URL}/${uuid}`,
+                    `${process.env.REACT_APP_API_URL}/${uuid}`,
                     { scale: 14 },
                     (err) => {
                         if (err) {
