@@ -170,7 +170,7 @@ function App() {
             formData.append('file', blob, 'photo.jpg');
 
             const res = await fetch(
-                `${process.env.REACT_APP_API_URL}/upload?secret=hi`,
+                `${process.env.REACT_APP_API_URL}upload?secret=hi`,
                 {
                     method: 'post',
                     body: formData
