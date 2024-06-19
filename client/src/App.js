@@ -164,7 +164,11 @@ function App() {
         }, 800);
     };
 
+    const [isSaving, setIsSaving] = useState(false);
+
     const savePhoto = () => {
+        setIsSaving(true);
+
         webcamCanvas.current.toBlob(async (blob) => {
             const formData = new FormData();
             formData.append('file', blob, 'photo.jpg');
@@ -197,6 +201,8 @@ function App() {
             } catch (e) {
                 console.error(e);
             }
+
+            setIsSaving(false);
         }, 'image/jpeg');
     };
 
@@ -322,7 +328,11 @@ function App() {
                             {isSaved ? (
                                 ''
                             ) : (
-                                <button className="button" onClick={savePhoto}>
+                                <button
+                                    className="button"
+                                    onClick={savePhoto}
+                                    disabled={isSaving}
+                                >
                                     Save
                                 </button>
                             )}
