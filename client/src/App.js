@@ -117,7 +117,7 @@ function App() {
         canvas.style.height = 'auto';
     };
 
-    useEffect(() => {
+    const requestCamera = () => {
         navigator.mediaDevices
             .getUserMedia({
                 video: { width: WEBCAM_WIDTH, height: WEBCAM_HEIGHT },
@@ -127,8 +127,18 @@ function App() {
                 const video = webcamVideoFeed.current;
                 video.srcObject = stream;
                 video.addEventListener('loadedmetadata', updateCanvasSize);
+
+                // re-request feed if ended
+                stream.getVideoTracks()[0].onended = () => {
+                    requestCamera();
+                };
             })
             .catch((e) => console.error(e));
+    };
+
+
+    useEffect(() => {
+        requestCamera();
 
         // prevent user from dragging on kiosk
         document.addEventListener('touchmove', (e) => e.preventDefault(), {
