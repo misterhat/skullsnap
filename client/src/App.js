@@ -295,8 +295,7 @@ function App() {
         <div
             onClick={() => {
                 try {
-                    throw new Error('ok whatever');
-                    document.documentElement.requestFullscreen();
+                    //document.documentElement.requestFullscreen();
                 } catch (e) {
                     console.error(e);
                 }
@@ -305,7 +304,7 @@ function App() {
             <div className="background"></div>
 
             <header className="header">
-                <img className="logo" src={seabearsImage} alt="Seabears logo" />
+                <img className="logo" src={seabearsImage} alt="Seabears logo" onclick={() => requestCamera()}/>
                 <img
                     src={takeYourShotImage}
                     alt="Take Your Shot"
